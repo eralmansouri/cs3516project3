@@ -1,25 +1,22 @@
-/*
-	Physical Layer emulation using TCP
-	
-	It has only a few functions.
-		Open Connection
-		Close Connection
-		Send (without confirmation)
-		Receive (without confirmation)
-		
-	Error checking and packet confirmations are left to other layers
-*/
+#include <netdb.h>
+#include <errno.h>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <netinet/tcp.h>
 
-#include <string>
-class Physical {
-	public:
-	Physical(std::string, uint16_t);
-	int Send(char*, size_t);
-	int Receive(char*, size_t);
-	void Close();
+#include "util.h"
 
-	private:
-	int m_sockfd;
-	fd_set m_readfds;
+#define MAXPENDING 5
 
-};
+int physical_connect(char* serverurl);
+
+void physical_send(char* buffer, int len, int socket);
+void physical_recieve(char* buffer, int len, int socket);
+
+int physical_bind();
+int physical_accept();
+
+void physical_close(int sock);

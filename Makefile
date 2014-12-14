@@ -1,20 +1,12 @@
-## Start of the Makefile
-all: main
+default: all
 
-main: physical.o main.o datalink.o
-	g++ main.o physical.o datalink.o -o main
-	
-main.o: main.cpp
-	g++ -c main.cpp
-	
-datalink.o: datalink.cpp datalink.h
-	g++ -c datalink.cpp
-	
-physical.o: physical.cpp physical.h
-	g++ -c physical.cpp
+all: server client util
 
+server: server.c physical.c datalink.c util.c
+	gcc -o server server.c physical.c datalink.c util.c
+
+client: client.c physical.c datalink.c util.c
+	gcc -o client client.c physical.c datalink.c util.c
 
 clean:
-	rm *.o
-## End of the Makefile
-
+	rm server client
