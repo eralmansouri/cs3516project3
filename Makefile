@@ -1,6 +1,6 @@
 default: all
 
-all: server client util
+all: server client
 
 server: server.c physical.c datalink.c util.c
 	gcc -o server server.c physical.c datalink.c util.c

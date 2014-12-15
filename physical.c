@@ -65,12 +65,12 @@ int physical_bind()
 	return sock;
 }
 
-int physical_accept(int socket)
+int physical_accept(int sock)
 {
 	int clientSocket;
 	struct sockaddr_in clientAddr;
 	int clientLen = sizeof(clientAddr);
-	if((clientSocket = accept(socket, (struct sockaddr*)&clientAddr, clientLen)) < 0){
+	if((clientSocket = accept(sock, (struct sockaddr*)&clientAddr, &clientLen)) < 0){
 		dieWithError("accept() failed");
 	}
 

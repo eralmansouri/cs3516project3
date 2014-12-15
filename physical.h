@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <netinet/tcp.h>
-
+#include <string.h>
 #include "util.h"
 
 #define MAXPENDING 5
