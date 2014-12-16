@@ -14,7 +14,7 @@
 int physical_connect(char* serverurl);
 
 void physical_send(char* buffer, int len, int socket);
-void physical_recieve(char* buffer, int len, int socket);
+int physical_recieve(char* buffer, int max, int socket);
 
 int physical_bind();
 int physical_accept();

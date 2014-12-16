@@ -1,5 +1,6 @@
 #include "physical.h"
 
+//establishes a connection with the given server
 int physical_connect(char* serverAddress)
 {
 	int sock;
@@ -23,21 +24,32 @@ int physical_connect(char* serverAddress)
 	return sock;
 }
 
+//sends the given buffer over the TCP socket
 void physical_send(char* buffer, int len, int socket)
 {
-
+	int sent = 0;
+	if((sent = send(socket, buffer, len, 0)) < len){
+		dieWithError("physical send() failed.");
+	}
 }
 
-void physical_recieve(char* buffer, int len, int socket)
+//recieves a TCP packet 
+int physical_recieve(char* buffer, int max, int socket)
 {
-
+	int recieved = 0;
+	if((recieved = recv(socket, buffer, max, 0)) < 0){
+		dieWithError("physical recieve() failed.");
+	}
+	return recieved;
 }
 
+//closes the connection
 void physical_close(int sock)
 {
 	close(sock);
 }
 
+//binds and listens on a port
 int physical_bind()
 {
 	int sock;
@@ -65,6 +77,7 @@ int physical_bind()
 	return sock;
 }
 
+//accepts the next incoming connection
 int physical_accept(int sock)
 {
 	int clientSocket;
