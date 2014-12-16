@@ -4,6 +4,7 @@
 
 #define MAX_FRAME_SIZE 130 // 24 //up to 255?
 #define MAX_PAYLOAD_SIZE 124
+
 DataLink::DataLink():
 	m_writesequence(1),
 	m_readsequence(1)
@@ -22,7 +23,7 @@ DataLink::DataLink():
 	m_acksent = 0;
 }
 
-
+//Inserts the given packet into frames and sends it to the physical layer
 //Author: Essam Al-Mansouri
 int DataLink::Send(const char* msgbuf, size_t msglen)
 {

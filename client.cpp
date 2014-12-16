@@ -50,6 +50,7 @@ Client::Client(char* serverurl, uint8_t client_id, uint8_t numofphotos)
 
 }
 
+//Reads a photo from the given filename and sends it to the datalink layer
 //Author: Essam Al-Mansouri
 void Client::SendPhoto(char* filename){
 	char buffer[201];
@@ -60,7 +61,7 @@ void Client::SendPhoto(char* filename){
 	do {
 		photofile.read(&buffer[1], 200);
 		if(photofile) buffer[0] = 0;
-		else buffer[0] = 1;
+		else buffer[0] = 1; //set the EOF byte
 		Send(buffer, photofile.gcount() + 1);
 	} while (photofile.good());
 	photofile.close();
@@ -70,6 +71,7 @@ void Client::SendPhoto(char* filename){
 	//m_network.Send(request.c_str(), request.size());
 }
 
+//Main entry point for client
 //Author: Essam Al-Mansouri
 int main(int argc , char *argv[]){
 	if (argc < 4) {
