@@ -18,6 +18,7 @@ class Network : public DataLink {
 	void Send(const char*, uint8_t);
 	int Receive(char*, uint8_t);
 	
+	uint32_t m_pktreceived;
 	private:
 	struct Message {	
 		uint8_t msgsize;
@@ -29,7 +30,7 @@ class Network : public DataLink {
 	uint16_t m_pktwriteseq;
 	uint16_t m_pktreadseq;
 	
-	uint32_t m_pktreceived;
+	
 	uint32_t m_ackpktsent;
 	uint32_t m_ackpktrecv;
 };

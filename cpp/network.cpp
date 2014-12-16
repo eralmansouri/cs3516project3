@@ -3,6 +3,7 @@
 
 #include "network.h"
 
+//Author: Akshay Thejaswi
 Network::Network():
 	m_buffered(0),
 	m_read(0)
@@ -14,28 +15,30 @@ Network::Network():
 	m_ackpktrecv = 0;
 }
 
+//Author: Akshay Thejaswi
 void Network::Send(const char* buffer, uint8_t length){
-	//std::cout << "Network::Send() called" << std::endl;
+	//create a packet of variable length and send it using DataLink layer
 	char msgbuff[MAX_MSG_SIZE];
+	
 	memcpy ( &msgbuff[0], &length, sizeof(length) );
 	memcpy ( &msgbuff[ sizeof(length)], buffer, length );
-	//std::cout << "Header Size: " << (length)*1 << ". String Length: " << length*1 << std::endl;
+
 	DataLink::Send(msgbuff, length + sizeof(length));
+	LOG << "Packet #" << m_pktsent*1 << " successfully sent." << std::endl;
 }
 
+//Author: Akshay Thejaswi
 int Network::Receive(char* buffer, uint8_t length){
-	//std::cout << "Network::Receive() called" << std::endl;
-	//do we already have data buffered?
+	//read in at least one full packet from datalink layer by combining frames
+	
 	if (!(m_read < m_buffered)){
-		//read 1 full packet
+		//do we already have bytes buffered?
 		m_read = 0;
 		m_buffered = DataLink::Receive((char*)&msg) - sizeof(msg.msgsize);
-		//
 		while (m_buffered < msg.msgsize) {
 			m_buffered += DataLink::Receive((char*)&msg.msgbuff[m_buffered]);
 		}
 		m_pktreceived++;
-		//std::cout << "msg.msgsize: " << msg.msgsize*1 << ", m_buffered: " << m_buffered*1 << std::endl;
 	}
 	
 	uint8_t read_bytes = m_buffered - m_read;
@@ -47,6 +50,6 @@ int Network::Receive(char* buffer, uint8_t length){
 	
 	memcpy(buffer, (char*)&msg.msgbuff[m_read], read_bytes);
 	m_read += read_bytes;
-	//std::cout << "Read bytes: " << read_bytes*1 << std::endl;
-	return read_bytes;
+
+	return read_bytes; //return the number of bytes we copied into the buffer
 }

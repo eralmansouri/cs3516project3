@@ -1,17 +1,6 @@
-/*
-	Physical Layer emulation using TCP
-	
-	It has only a few functions.
-		Open Connection
-		Close Connection
-		Send (without confirmation)
-		Receive (without confirmation)
-		
-	Error checking and packet confirmations are left to other layers
-*/
+//Author: Essam Al-Mansouri
 #define LOG outlogfile << "Client (" << m_clientid*1 << "): " 
 #include <fstream>
-#include <string>
 class Physical {
 	public:
 	Physical();
@@ -25,12 +14,9 @@ class Physical {
 	void Close();
 	
 	//logging related
-	~Physical(){outlogfile.close();}
-	
-	uint8_t getClientId(){return m_clientid;}
 	std::ofstream outlogfile;
 
-	bool is_client;
+	bool is_client; //true for client application only
 	uint8_t m_clientid;
 	
 	private:

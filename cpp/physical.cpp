@@ -20,6 +20,7 @@
 #include <stdexcept>
 
 #include "physical.h"
+//Author: Akshay Thejaswi
 Physical::Physical():
 	is_client(false)
 {
@@ -35,6 +36,7 @@ Physical::Physical():
 			
 }
 
+//Author: Akshay Thejaswi
 void Physical::Connect(char* serverurl, uint16_t portnum, uint8_t clientid){
 
 	struct sockaddr_in serveraddr;
@@ -57,10 +59,11 @@ void Physical::Connect(char* serverurl, uint16_t portnum, uint8_t clientid){
 		throw std::runtime_error("connect to webserver failed."); //error connecting to webserver
 	}
 	
-	is_client = true;
+	is_client = true; //only a client would use Connect
 	m_clientid = clientid;
 }
-	
+
+//Author: Akshay Thejaswi
 int Physical::Bind(uint16_t portnum){
 	struct sockaddr_in sockaddr;
 	memset(&sockaddr, 0, sizeof(sockaddr));
@@ -74,7 +77,9 @@ int Physical::Bind(uint16_t portnum){
 	}
 }
 
+//Author: Akshay Thejaswi
 int Physical::Listen(uint8_t maxpending){
+	//listen for connecting clients
 	int ret = listen(m_sockfd, maxpending);
 	if (ret < 0){
 		throw std::runtime_error("error listening on socket");
@@ -83,7 +88,10 @@ int Physical::Listen(uint8_t maxpending){
 
 }
 
+//Author: Akshay Thejaswi
 bool Physical::Accept(){
+
+	//handle a connecting client in a child process
 	struct sockaddr_in clientaddr;
 	socklen_t clientlen = sizeof(clientaddr);
 	int client_sock = accept(m_sockfd, (struct sockaddr *) &clientaddr, &clientlen);
@@ -96,59 +104,46 @@ bool Physical::Accept(){
 		throw std::runtime_error("error forking application");
 	}
 	else if (pid == 0) {
-		//child process
-		
-		//outlogfile << "Client (" << m_clientid*1 << "): " << logstr << std::endl;
+		//update socket information for child process
 		m_sockfd = client_sock;
-		
-		//get client id for logging related functions
-		
+
 	}
 	
-	return (pid == 0);
+	return (pid == 0); //return true if current process is a child
 }
 
-
+//Author: Akshay Thejaswi
 int Physical::Send(const char* msgbuf, size_t msglen, int flags){
-	//check if disconnected
-	//std::cout << "Physical::Send called" << std::endl;
 	int ret = send(m_sockfd, msgbuf, msglen, flags);
-	//std::cout << errno << std::endl;
 	if (ret < 0) {
 		throw std::runtime_error("error sending message");
 	}
-	//std::cout << "Physical::Send success: " << ret << std::endl;
 	return ret;
 }
 
 
-//TODO: Callback function instead of Receive();
+//Author: Akshay Thejaswi
 int Physical::Receive(char* msgbuf, size_t msglen, int flags, struct timeval* timeout){
-	//std::cout << "Physical::Receive() called" << std::endl;
 
 	//select instead of poll
 	fd_set m_readfds;
 	FD_ZERO(&m_readfds);
 	FD_SET(m_sockfd, &m_readfds);
 
-	int sockchange = select(m_sockfd+1, &m_readfds , NULL , NULL , NULL);
-	if ((sockchange < 0) && (errno!=EINTR)){
+	int sockchange = select(m_sockfd+1, &m_readfds , NULL , NULL , timeout);
+	if ((sockchange < 0) && (errno!=EINTR)){ //error using select
 		//std::cout << errno << std::endl;
 		throw std::runtime_error("select error");
 	}
 
-	if (FD_ISSET(m_sockfd, &m_readfds)){
+	if (FD_ISSET(m_sockfd, &m_readfds)){ //any changes?
 		int mcount;
 		
-		//check if disconnected
-		if ((mcount = recv(m_sockfd, msgbuf, msglen, flags)) == 0){ //read instead of recv?
-			
+		//read in data and check if disconnected
+		if ((mcount = recv(m_sockfd, msgbuf, msglen, flags)) == 0){ 
 			Close();
-			
-			throw std::runtime_error("Client disconnected.");
 		}
-		
-		//std::cout << std::string(msgbuf, mcount) << std::endl;
+
 		return mcount;
 	}
 	else {
@@ -156,7 +151,10 @@ int Physical::Receive(char* msgbuf, size_t msglen, int flags, struct timeval* ti
 	}
 }
 
+//Author: Akshay Thejaswi
 void Physical::Close(){
-	LOG << "Disconnected";
+	LOG << "Disconnected" << std::endl;
 	close(m_sockfd);
+	throw std::runtime_error("Partner disconnected.");
+	//throw std::runtime_error("Partner disconnected.");
 }

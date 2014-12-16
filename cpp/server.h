@@ -17,6 +17,5 @@ class Server : public Network {
 	void HandleClient();
 	
 	private:
-	Network m_network;
 
 };
