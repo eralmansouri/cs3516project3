@@ -1,0 +1,13 @@
+Concurrent photo server & client
+Essam Al-Mansouri <eralmansouri@wpi.edu>
+Akshay Thejaswi <akshay@wpi.edu>
+
+Building:
+	Build everything: make
+	Clean: make clean
+
+Running:
+	Server: ./server
+	Client: ./client [server_address] [client_id] [num_files]
+
+The server and client will write to the log files defined in the assignment.
