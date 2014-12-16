@@ -2,14 +2,16 @@
 #include <fstream>
 #include <stdexcept>
 
+#include <sys/time.h>
 #include <iostream>
 #include <string>
 //Author: Essam Al-Mansouri
 Client::Client(char* serverurl, uint8_t client_id, uint8_t numofphotos)
-	: m_clientid(client_id)
 {
+	m_clientid = client_id;
 	if (client_id > 9) throw std::runtime_error("only 1 digit client_id is allowed.");
-
+	struct timeval starttime, endtime;
+	gettimeofday(&starttime, NULL);
 	char filename[15];
 	sprintf(filename, "client_%d.log", client_id);
 	outlogfile.open(filename, std::ofstream::out);
@@ -39,6 +41,9 @@ Client::Client(char* serverurl, uint8_t client_id, uint8_t numofphotos)
 		LOG << "Number of good ACKS: " << m_framesreceived*1 << std::endl;
 		LOG << "Number of error ACKS: " << m_errorack*1 << std::endl;
 		LOG << "Number of timeout ACKS: " << m_timeout*1 << std::endl;
+		gettimeofday(&endtime, NULL);
+		double seconddelay = ((endtime.tv_sec) + (endtime.tv_usec/1000000.0)) - ((starttime.tv_sec) + (starttime.tv_usec/1000000.0)); 
+		LOG << "Estimated performance time: " << seconddelay << std::endl;
 	}
 	
 	outlogfile.close();
